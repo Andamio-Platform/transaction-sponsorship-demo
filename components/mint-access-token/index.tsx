@@ -6,8 +6,6 @@ import { Button } from "../ui/button";
 import AndamioSDK from "@andamiojs/sdk";
 import { toast } from "sonner";
 import { Textarea } from "../ui/textarea";
-import { BlockfrostProvider, MeshTxBuilder, TxParser } from "@meshsdk/core";
-import { CSLSerializer } from "@meshsdk/core-csl";
 
 export function MintAccessToken() {
   return (
@@ -90,10 +88,6 @@ function BuildTx() {
     "Preprod"
   );
 
-  const blockfrost = new BlockfrostProvider(
-  "https://blockfrost1fnqnszsgxy7f6xm0e9a.blockfrost-m1.demeter.run"
-  );
-
   const onClick = () => {
     const buildTransaction = async () => {
       if (connected && address) {
@@ -139,32 +133,27 @@ function BuildTx() {
           console.log("Collateral UTXOs:", collateralUtxos);
           console.log("UTXOs available for sponsorship:", utxos);
 
-          const serializer = new CSLSerializer();
-          const parser = new TxParser(serializer, blockfrost);
-          const txParsed = await parser.parse(tx);
-
-          txParsed.inputs = txParsed.inputs.filter(input => 
-            input.txIn.txHash !== "8222b0327a95e8c357016a5df64d93d7cf8a585a07c55327ae618a7e00d58d9e"
-          );
-          txParsed.changeAddress = sponsorAddress;
-          txParsed.fee = "0";
-          txParsed.collateralReturnAddress = sponsorAddress;
-          txParsed.collaterals = [];
-
-          const txBuilder = new MeshTxBuilder({
-            serializer,
-            fetcher: blockfrost,
-            evaluator: blockfrost,
+          // Build sponsored transaction via API
+          const buildResponse = await fetch('/api/build-sponsored-tx', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              txCbor: tx,
+              sponsorAddress,
+              utxos,
+              collateralUtxos
+            }),
           });
-          txBuilder.meshTxBuilderBody = txParsed;
 
-          const unsignedTx = await txBuilder
-            .txIn(utxos[0].input.txHash, utxos[0].input.outputIndex)
-            .txInCollateral(
-              collateralUtxos[0].input.txHash,
-              collateralUtxos[0].input.outputIndex
-            )
-            .complete();
+          const buildResult = await buildResponse.json();
+
+          if (!buildResult.success) {
+            throw new Error(buildResult.error);
+          }
+
+          const unsignedTx = buildResult.data;
 
           // Sign transaction via API
           const signResponse = await fetch('/api/sign-transaction', {
@@ -204,7 +193,21 @@ function BuildTx() {
     if (sponsorTx) {
       setSubmitLoading(true);
       try {
-        const txHash = await blockfrost.submitTx(sponsorTx);
+        const submitResponse = await fetch('/api/submit-transaction', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ signedTx: sponsorTx }),
+        });
+
+        const submitResult = await submitResponse.json();
+
+        if (!submitResult.success) {
+          throw new Error(submitResult.error);
+        }
+
+        const txHash = submitResult.data;
         setTxHash(txHash);
         toast("Transaction submitted successfully", {
           description: `Transaction hash: ${txHash}`,
