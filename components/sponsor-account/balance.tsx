@@ -46,8 +46,6 @@ export default async function SponsorAccountBalance() {
       Number(utxo.output.amount.find((a) => a.unit === "lovelace")!.quantity),
     0
   );
-  console.log("Balance:", balance);
-  console.log("Collateral:", collateral);
   return (
     <div>
       <Card>

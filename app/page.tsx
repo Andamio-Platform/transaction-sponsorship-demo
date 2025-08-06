@@ -1,3 +1,4 @@
+import { MintAccessToken } from "@/components/mint-access-token";
 import SponsorAccountBalance from "@/components/sponsor-account/balance";
 import UserAccountBalance from "@/components/user-account/balance";
 import Image from "next/image";
@@ -10,6 +11,9 @@ export default function Home() {
         <div className="grid grid-cols-2 justify-end w-full gap-4 items-center">
           <SponsorAccountBalance />
           <UserAccountBalance />
+        </div>
+        <div className="flex flex-col justify-end w-full items-center gap-4">
+          <MintAccessToken />
         </div>
       </main>
     </div>

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@andamiojs/sdk':
+        specifier: ^0.2.5
+        version: 0.2.5(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
       '@meshsdk/core':
         specifier: 1.9.0-beta.69
         version: 1.9.0-beta.69(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
@@ -32,12 +35,18 @@ importers:
       next:
         specifier: 15.4.5
         version: 15.4.5(@babel/core@7.28.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      next-themes:
+        specifier: ^0.4.6
+        version: 0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react:
         specifier: 19.1.0
         version: 19.1.0
       react-dom:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -82,6 +91,9 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@andamiojs/sdk@0.2.5':
+    resolution: {integrity: sha512-egM035hHIl3kh+AIoREPKabcX/0YGNv5ToMzkaLE1bqUuKenDHEAJPY14Tviyq522/IPhsqbeBoJUuPPouoBmg==}
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -615,6 +627,9 @@ packages:
   '@meshsdk/common@1.9.0-beta.69':
     resolution: {integrity: sha512-iXHfE7OH86TDLkfwW1N1xYpejCDm59oiQzKv8QDzns85rWzeo15X7QVsLtaxjzKBmyn85khLnT8QskMwrElQFA==}
 
+  '@meshsdk/core-csl@1.9.0-beta.62':
+    resolution: {integrity: sha512-pegeA+xhnBsOHkTH9aB2yKySPVc71yG3v+OBWm0ov8B/+wCJ49fwOFM2wyWDgkEqqBuSjQ+hdr/epxXJ2MhDng==}
+
   '@meshsdk/core-cst@1.9.0-beta.53':
     resolution: {integrity: sha512-u8I1g8EqfI+ysCtMg258NrMZ+uoSdM5RlrfVRuss0a7jsrSB64ae1kZXDaO2HROycpwz+muZbCVN5JywSVKmTQ==}
 
@@ -1125,6 +1140,12 @@ packages:
   '@scure/base@1.2.6':
     resolution: {integrity: sha512-g/nm5FgUa//MCj1gV09zTJTaM6KBAHqLN907YVQqf7zC49+DcO4B1so4ZX07Ef10Twr6nuqYEH9GEggFXA4Fmg==}
 
+  '@sidan-lab/whisky-js-browser@1.0.9':
+    resolution: {integrity: sha512-4583YqCJ+5ZQvZ6J3/+iUVW+HITIYNuJQtB7/1rXIctH8q30qgmqIvqrUI+zst0M5hy2D/acSg1LRSCNlNXPmA==}
+
+  '@sidan-lab/whisky-js-nodejs@1.0.9':
+    resolution: {integrity: sha512-CgUK+m1cYb2CPdW6bg0OL/jfUuNWIgx+Icz65cpdXdht5ZGhVpl0o7Ft8SPBxCY4yifeBCfw57F6ZqUhqEf/Sw==}
+
   '@silentbot1/nat-api@0.4.8':
     resolution: {integrity: sha512-DBz/1gGzaYIbUdGTBQ7l4NrI7a+DFZgdZShmjmBGgJR4PvQ64wKNMwle2rrW8pdiOesN+DV6/8ZN/PLuksNyTg==}
     engines: {node: '>=10.0.0'}
@@ -1424,6 +1445,10 @@ packages:
 
   '@utxorpc/spec@0.16.0':
     resolution: {integrity: sha512-EK2M0TBp14MrRCYDuFeJ+bAS39RxxLLh+CD08h/YvAgxSv/4ZOBCf1/sxHAGCBGGndB4heZYFeuQ+i1i8vP5lw==}
+    engines: {node: '>=20.0.0'}
+
+  '@utxorpc/spec@0.17.0':
+    resolution: {integrity: sha512-5E+kUTkABl3mFTCOGJZg1uk9SDrilyVHR2b++3RK9+BWbNOSaSnJtp91XxLLkWMTNzbWQw0tB2qY7aoCIkvu7Q==}
     engines: {node: '>=20.0.0'}
 
   '@utxos/web3-sdk@0.0.44':
@@ -2855,6 +2880,12 @@ packages:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
     engines: {node: '>= 0.4.0'}
 
+  next-themes@0.4.6:
+    resolution: {integrity: sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==}
+    peerDependencies:
+      react: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+
   next@15.4.5:
     resolution: {integrity: sha512-nJ4v+IO9CPmbmcvsPebIoX3Q+S7f6Fu08/dEWu0Ttfa+wVwQRh9epcmsyCPjmL2b8MxC+CkBR97jgDhUUztI3g==}
     engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
@@ -3389,6 +3420,12 @@ packages:
     resolution: {integrity: sha512-pe4Y2yzru68lXCb38aAqRf5gvN8YdjP1lok5o0J7BOHljkyCGKVz7H3vpVIXKD27rj2giOJ7DwVyk/GWrPHDWA==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
+  sonner@2.0.7:
+    resolution: {integrity: sha512-W6ZN4p58k8aDKA4XPcx2hpIQXBRAgyiWVkYhT7CvK6D3iAu7xjvVyhQHg2/iaKJZ1XVJ4r7XuwGL+WGEK37i9w==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -3834,6 +3871,36 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.12
       '@jridgewell/trace-mapping': 0.3.29
+
+  '@andamiojs/sdk@0.2.5(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)':
+    dependencies:
+      '@meshsdk/common': 1.9.0-beta.62
+      '@meshsdk/core': 1.9.0-beta.62(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
+      '@meshsdk/core-csl': 1.9.0-beta.62
+      '@meshsdk/core-cst': 1.9.0-beta.62(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(bufferutil@4.0.9)(rxjs@7.8.2)(utf-8-validate@6.0.5)
+      '@utxorpc/sdk': 0.6.8(@bufbuild/protobuf@1.10.1)
+      '@utxorpc/spec': 0.17.0
+      cbor: 10.0.10
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@bufbuild/protobuf'
+      - '@dcspark/cardano-multiplatform-lib-asmjs'
+      - '@dcspark/cardano-multiplatform-lib-browser'
+      - '@dcspark/cardano-multiplatform-lib-nodejs'
+      - '@harmoniclabs/bytestring'
+      - '@harmoniclabs/crypto'
+      - '@types/react'
+      - '@types/react-dom'
+      - bare-buffer
+      - bufferutil
+      - debug
+      - encoding
+      - react
+      - react-dom
+      - rxjs
+      - supports-color
+      - tailwindcss
+      - utf-8-validate
 
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -4540,6 +4607,16 @@ snapshots:
       bip39: 3.1.0
       blake2b: 2.1.4
       blakejs: 1.2.1
+
+  '@meshsdk/core-csl@1.9.0-beta.62':
+    dependencies:
+      '@meshsdk/common': 1.9.0-beta.62
+      '@sidan-lab/whisky-js-browser': 1.0.9
+      '@sidan-lab/whisky-js-nodejs': 1.0.9
+      '@types/base32-encoding': 1.0.2
+      base32-encoding: 1.0.0
+      bech32: 2.0.0
+      json-bigint: 1.0.0
 
   '@meshsdk/core-cst@1.9.0-beta.53(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(bufferutil@4.0.9)(rxjs@7.8.2)(utf-8-validate@6.0.5)':
     dependencies:
@@ -5512,6 +5589,10 @@ snapshots:
 
   '@scure/base@1.2.6': {}
 
+  '@sidan-lab/whisky-js-browser@1.0.9': {}
+
+  '@sidan-lab/whisky-js-nodejs@1.0.9': {}
+
   '@silentbot1/nat-api@0.4.8':
     dependencies:
       chrome-dgram: 3.0.6
@@ -5823,6 +5904,10 @@ snapshots:
       - '@bufbuild/protobuf'
 
   '@utxorpc/spec@0.16.0':
+    dependencies:
+      '@bufbuild/protobuf': 1.10.1
+
+  '@utxorpc/spec@0.17.0':
     dependencies:
       '@bufbuild/protobuf': 1.10.1
 
@@ -7513,6 +7598,11 @@ snapshots:
 
   netmask@2.0.2: {}
 
+  next-themes@0.4.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
   next@15.4.5(@babel/core@7.28.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@next/env': 15.4.5
@@ -8053,6 +8143,11 @@ snapshots:
     dependencies:
       ip-address: 9.0.5
       smart-buffer: 4.2.0
+
+  sonner@2.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   source-map-js@1.2.1: {}
 
