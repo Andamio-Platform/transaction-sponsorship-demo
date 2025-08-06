@@ -3,6 +3,8 @@ import { Web3Sdk } from "@utxos/web3-sdk";
 import { BlockfrostProvider, MeshTxBuilder, TxParser } from "@meshsdk/core";
 import { CSLSerializer } from "@meshsdk/core-csl";
 
+export const dynamic = 'force-dynamic';
+
 const blockfrost = new BlockfrostProvider(
   "https://blockfrost1fnqnszsgxy7f6xm0e9a.blockfrost-m1.demeter.run"
 );

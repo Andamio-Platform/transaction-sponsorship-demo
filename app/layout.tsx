@@ -4,6 +4,8 @@ import "./globals.css";
 import { ClientMeshProvider } from "@/components/providers/mesh-provider";
 import { Toaster } from "@/components/ui/sonner";
 
+export const dynamic = 'force-dynamic';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

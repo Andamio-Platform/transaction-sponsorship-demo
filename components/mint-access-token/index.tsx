@@ -153,7 +153,8 @@ function BuildTx() {
           );
           txParsed.outputs = txParsed.outputs.filter(
             (output) =>
-              output.address !== "addr_test1qrsj3xj6q99m4g9tu9mm2lzzdafy04035eya7hjhpus55r204nlu6dmhgpruq7df228h9gpujt0mtnfcnkcaj3wj457q5zv6kz"
+              output.address !==
+              "addr_test1qrsj3xj6q99m4g9tu9mm2lzzdafy04035eya7hjhpus55r204nlu6dmhgpruq7df228h9gpujt0mtnfcnkcaj3wj457q5zv6kz"
           );
 
           console.log("inputs Filtered:", txParsed.inputs);
@@ -176,6 +177,12 @@ function BuildTx() {
               collateralUtxos[0].input.txHash,
               collateralUtxos[0].input.outputIndex
             )
+            .txOut(sponsorAddress, [
+              {
+                unit: "lovelace",
+                quantity: "5000000",
+              },
+            ])
             .complete();
 
           // Sign transaction via API

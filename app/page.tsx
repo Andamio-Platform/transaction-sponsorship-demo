@@ -2,6 +2,8 @@ import { MintAccessToken } from "@/components/mint-access-token";
 import SponsorAccountBalance from "@/components/sponsor-account/balance";
 import UserAccountBalance from "@/components/user-account/balance";
 
+export const dynamic = 'force-dynamic';
+
 function TypographyH1() {
   return (
     <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">

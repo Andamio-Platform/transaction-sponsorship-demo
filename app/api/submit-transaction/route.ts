@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BlockfrostProvider } from "@meshsdk/core";
 
+export const dynamic = 'force-dynamic';
+
 const blockfrost = new BlockfrostProvider(
   "preprod9nU4kQP5IaqnIFP9M8DhK8bfk1W6dufu"
 );
