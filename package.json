@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@meshsdk/core": "1.9.0-beta.69",
     "@meshsdk/react": "1.9.0-beta.69",
     "@radix-ui/react-slot": "^1.2.3",
+    "@utxos/web3-sdk": "^0.0.44",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.536.0",
