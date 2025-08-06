@@ -123,7 +123,7 @@ function BuildTx() {
         setSponsoredTxLoading(true);
         try {
           // Get UTXOs from API
-          const utxosResponse = await fetch('/api/get-utxos');
+          const utxosResponse = await fetch("/api/get-utxos");
           const utxosResult = await utxosResponse.json();
 
           if (!utxosResult.success) {
@@ -136,48 +136,53 @@ function BuildTx() {
           console.log("UTXOs available for sponsorship:", utxos);
 
           const blockfrost = new BlockfrostProvider(
-  "preprod9nU4kQP5IaqnIFP9M8DhK8bfk1W6dufu"
-);
+            "preprod9nU4kQP5IaqnIFP9M8DhK8bfk1W6dufu"
+          );
 
           const serializer = new CSLSerializer();
-    const parser = new TxParser(serializer, blockfrost);
-    const txParsed = await parser.parse(tx);
+          const parser = new TxParser(serializer, blockfrost);
+          const txParsed = await parser.parse(tx);
 
-    console.log("inputs Original:", txParsed.inputs);
+          console.log("inputs Original:", txParsed.inputs);
 
-    // Filter out specific input if needed
-    txParsed.inputs = txParsed.inputs.filter(input => 
-      input.txIn.txHash !== "8222b0327a95e8c357016a5df64d93d7cf8a585a07c55327ae618a7e00d58d9e"
-    );
+          // Filter out specific input if needed
+          txParsed.inputs = txParsed.inputs.filter(
+            (input) =>
+              input.txIn.txHash !==
+              "8222b0327a95e8c357016a5df64d93d7cf8a585a07c55327ae618a7e00d58d9e"
+          );
+          txParsed.outputs = txParsed.outputs.filter(
+            (output) =>
+              output.address !== "addr_test1qrsj3xj6q99m4g9tu9mm2lzzdafy04035eya7hjhpus55r204nlu6dmhgpruq7df228h9gpujt0mtnfcnkcaj3wj457q5zv6kz"
+          );
 
-    console.log("inputs Filtered:", txParsed.inputs);
-    
-    txParsed.changeAddress = sponsorAddress;
-    txParsed.fee = "0";
-    txParsed.collateralReturnAddress = sponsorAddress;
-    txParsed.collaterals = [];
+          console.log("inputs Filtered:", txParsed.inputs);
 
-    const txBuilder = new MeshTxBuilder({
-      serializer,
-      fetcher: blockfrost,
-      evaluator: blockfrost,
-    });
-    txBuilder.meshTxBuilderBody = txParsed;
+          txParsed.changeAddress = sponsorAddress;
+          txParsed.fee = "0";
+          txParsed.collateralReturnAddress = sponsorAddress;
+          txParsed.collaterals = [];
 
-    const unsignedTx = await txBuilder
-      .txIn(utxos[0].input.txHash, utxos[0].input.outputIndex)
-      .txIn(collateralUtxos[0].input.txHash, collateralUtxos[0].input.outputIndex)
-      .txInCollateral(
-        collateralUtxos[0].input.txHash,
-        collateralUtxos[0].input.outputIndex
-      )
-      .complete();
+          const txBuilder = new MeshTxBuilder({
+            serializer,
+            fetcher: blockfrost,
+            evaluator: blockfrost,
+          });
+          txBuilder.meshTxBuilderBody = txParsed;
+
+          const unsignedTx = await txBuilder
+            .selectUtxosFrom(utxos)
+            .txInCollateral(
+              collateralUtxos[0].input.txHash,
+              collateralUtxos[0].input.outputIndex
+            )
+            .complete();
 
           // Sign transaction via API
-          const signResponse = await fetch('/api/sign-transaction', {
-            method: 'POST',
+          const signResponse = await fetch("/api/sign-transaction", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ unsignedTx }),
           });
@@ -211,10 +216,10 @@ function BuildTx() {
     if (sponsorTx) {
       setSubmitLoading(true);
       try {
-        const submitResponse = await fetch('/api/submit-transaction', {
-          method: 'POST',
+        const submitResponse = await fetch("/api/submit-transaction", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ signedTx: sponsorTx }),
         });
