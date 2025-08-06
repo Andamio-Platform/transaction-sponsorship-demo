@@ -237,7 +237,7 @@ function BuildTx() {
             <Button disabled={true}>Submit Tx</Button>
           </>
         )}
-        <Textarea placeholder={sponsorTx ? sponsorTx : tx ? tx : "cbor"} />
+        <Textarea disabled={true} value={sponsorTx ? sponsorTx : tx ? tx : "cbor"} />
       </div>
     </div>
   );
