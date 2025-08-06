@@ -1,22 +1,18 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BlockfrostProvider } from "@meshsdk/core";
 import { Web3Sdk } from "@utxos/web3-sdk";
 
 export default async function SponsorAccountBalance() {
   const blockfrost = new BlockfrostProvider(
-    "https://blockfrost1fnqnszsgxy7f6xm0e9a.blockfrost-m1.demeter.run"
+  "https://blockfrost1fnqnszsgxy7f6xm0e9a.blockfrost-m1.demeter.run"
   );
+
   const sdk = new Web3Sdk({
-    projectId: "13ff4981-bdca-4aad-ba9a-41fe1018fdb0",
-    apiKey: "5a725d02-9efd-48d8-b65c-5ad9b381215b",
+    projectId: "34f25f89-7cf6-4abb-8660-df55f0842b8f",
+    apiKey: "f7684db5-4e91-4f1d-ac62-82da3e31d7ec",
     network: "testnet",
     privateKey:
-      "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg6Iuxu9KuTXz6Wkx2LyGartXdLN6OwmmwEBWNamV3FTihRANCAASdEySWvmzvuIep65EAU8zQbTbuNdkNDkKCFQs7fzipK6Zp+oiGDxKu1KA9+ts8D4H1Pjp7lW0MDDifxvmM52BU",
+      "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgUkkPjAn0eGhQCj8pn5W8kd4urBZ2anNqf3m19f6EtnOhRANCAARCw8EK/uUauXhiaTu6/H2w/pJzbRwJtiIxbSpthW+RGi8xILrP4C5/LcuZLpfmMJF/axQ39t4vguf0zS2LFyMf",
     fetcher: blockfrost,
     submitter: blockfrost,
   });
@@ -25,24 +21,28 @@ export default async function SponsorAccountBalance() {
   const wallet = (await sdk.wallet.getWallet(wallets[0].id, 0)).wallet;
 
   const collateralUtxos = await wallet.getCollateral();
-  const collateralTxHashes = new Set(
-    collateralUtxos.map((utxo) => utxo.input.txHash)
+  const utxos = (await wallet.getUtxos()).filter(
+    (utxo) =>
+      !collateralUtxos.some(
+        (c) =>
+          c.input.txHash === utxo.input.txHash &&
+          c.input.outputIndex === utxo.input.outputIndex
+      )
   );
 
-  const balance = (await wallet.getUtxos())
-    .filter((utxo) => !collateralTxHashes.has(utxo.input.txHash))
-    .reduce(
-      (acc, utxo) =>
-        acc +
-        Number(utxo.output.amount.find((a) => a.unit === "lovelace")!.quantity),
-      0
-    );
+  const balance = utxos.reduce(
+    (acc, utxo) =>
+      acc +
+      Number(utxo.output.amount.find((a) => a.unit === "lovelace")!.quantity),
+    0
+  );
   const collateral = collateralUtxos.reduce(
     (acc, utxo) =>
       acc +
       Number(utxo.output.amount.find((a) => a.unit === "lovelace")!.quantity),
     0
   );
+
   return (
     <div>
       <Card>

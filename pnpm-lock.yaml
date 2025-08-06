@@ -14,6 +14,9 @@ importers:
       '@meshsdk/core':
         specifier: 1.9.0-beta.69
         version: 1.9.0-beta.69(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
+      '@meshsdk/core-csl':
+        specifier: 1.9.0-beta.69
+        version: 1.9.0-beta.69
       '@meshsdk/react':
         specifier: 1.9.0-beta.69
         version: 1.9.0-beta.69(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
@@ -629,6 +632,9 @@ packages:
 
   '@meshsdk/core-csl@1.9.0-beta.62':
     resolution: {integrity: sha512-pegeA+xhnBsOHkTH9aB2yKySPVc71yG3v+OBWm0ov8B/+wCJ49fwOFM2wyWDgkEqqBuSjQ+hdr/epxXJ2MhDng==}
+
+  '@meshsdk/core-csl@1.9.0-beta.69':
+    resolution: {integrity: sha512-ssavZSNhpxWxdVpzOzyyNrVHBFo3SScBC9n+Jd+cKNu5kJqDGfZd1byqfHpgg/xq++GD4uYbsatZc5L8ueP8Aw==}
 
   '@meshsdk/core-cst@1.9.0-beta.53':
     resolution: {integrity: sha512-u8I1g8EqfI+ysCtMg258NrMZ+uoSdM5RlrfVRuss0a7jsrSB64ae1kZXDaO2HROycpwz+muZbCVN5JywSVKmTQ==}
@@ -4611,6 +4617,16 @@ snapshots:
   '@meshsdk/core-csl@1.9.0-beta.62':
     dependencies:
       '@meshsdk/common': 1.9.0-beta.62
+      '@sidan-lab/whisky-js-browser': 1.0.9
+      '@sidan-lab/whisky-js-nodejs': 1.0.9
+      '@types/base32-encoding': 1.0.2
+      base32-encoding: 1.0.0
+      bech32: 2.0.0
+      json-bigint: 1.0.0
+
+  '@meshsdk/core-csl@1.9.0-beta.69':
+    dependencies:
+      '@meshsdk/common': 1.9.0-beta.69
       '@sidan-lab/whisky-js-browser': 1.0.9
       '@sidan-lab/whisky-js-nodejs': 1.0.9
       '@types/base32-encoding': 1.0.2

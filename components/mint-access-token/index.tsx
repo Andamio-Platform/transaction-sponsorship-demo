@@ -6,8 +6,8 @@ import { Button } from "../ui/button";
 import AndamioSDK from "@andamiojs/sdk";
 import { toast } from "sonner";
 import { Textarea } from "../ui/textarea";
-import { Web3Sdk } from "@utxos/web3-sdk";
-import { BlockfrostProvider } from "@meshsdk/core";
+import { BlockfrostProvider, MeshTxBuilder, TxParser } from "@meshsdk/core";
+import { CSLSerializer } from "@meshsdk/core-csl";
 
 export function MintAccessToken() {
   return (
@@ -91,18 +91,8 @@ function BuildTx() {
   );
 
   const blockfrost = new BlockfrostProvider(
-    "https://blockfrost1fnqnszsgxy7f6xm0e9a.blockfrost-m1.demeter.run"
+  "https://blockfrost1fnqnszsgxy7f6xm0e9a.blockfrost-m1.demeter.run"
   );
-
-  const sdk = new Web3Sdk({
-    projectId: "13ff4981-bdca-4aad-ba9a-41fe1018fdb0",
-    apiKey: "5a725d02-9efd-48d8-b65c-5ad9b381215b",
-    network: "testnet",
-    privateKey:
-      "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg6Iuxu9KuTXz6Wkx2LyGartXdLN6OwmmwEBWNamV3FTihRANCAASdEySWvmzvuIep65EAU8zQbTbuNdkNDkKCFQs7fzipK6Zp",
-    fetcher: blockfrost,
-    submitter: blockfrost,
-  });
 
   const onClick = () => {
     const buildTransaction = async () => {
@@ -136,24 +126,68 @@ function BuildTx() {
       if (connected && tx) {
         setSponsoredTxLoading(true);
         try {
-          const sponsoredTx = await sdk.sponsorship.sponsorTx({
-            sponsorshipId: "bf5803c9-f0c0-4120-8a45-ff7b407c9ef9",
-            tx: tx,
-          });
-          if (sponsoredTx.success) {
-            setSponsorTx(sponsoredTx.data);
-          } else {
-            if (sponsoredTx.success === false) {
-              setSponsoredTxError(sponsoredTx.error);
-              console.log("Sponsorship failed:", sponsoredTx.error);
-            }
+          // Get UTXOs from API
+          const utxosResponse = await fetch('/api/get-utxos');
+          const utxosResult = await utxosResponse.json();
+
+          if (!utxosResult.success) {
+            throw new Error(utxosResult.error);
           }
+
+          const { sponsorAddress, collateralUtxos, utxos } = utxosResult.data;
+
+          console.log("Collateral UTXOs:", collateralUtxos);
+          console.log("UTXOs available for sponsorship:", utxos);
+
+          const serializer = new CSLSerializer();
+          const parser = new TxParser(serializer, blockfrost);
+          const txParsed = await parser.parse(tx);
+
+          txParsed.inputs = txParsed.inputs.filter(input => 
+            input.txIn.txHash !== "8222b0327a95e8c357016a5df64d93d7cf8a585a07c55327ae618a7e00d58d9e"
+          );
+          txParsed.changeAddress = sponsorAddress;
+          txParsed.fee = "0";
+          txParsed.collateralReturnAddress = sponsorAddress;
+          txParsed.collaterals = [];
+
+          const txBuilder = new MeshTxBuilder({
+            serializer,
+            fetcher: blockfrost,
+            evaluator: blockfrost,
+          });
+          txBuilder.meshTxBuilderBody = txParsed;
+
+          const unsignedTx = await txBuilder
+            .txIn(utxos[0].input.txHash, utxos[0].input.outputIndex)
+            .txInCollateral(
+              collateralUtxos[0].input.txHash,
+              collateralUtxos[0].input.outputIndex
+            )
+            .complete();
+
+          // Sign transaction via API
+          const signResponse = await fetch('/api/sign-transaction', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ unsignedTx }),
+          });
+
+          const signResult = await signResponse.json();
+
+          if (!signResult.success) {
+            throw new Error(signResult.error);
+          }
+
+          setSponsorTx(signResult.data);
         } catch (error) {
           console.error("Failed to sponsor transaction:", error);
           toast("Failed to sponsor transaction", {
             description: "Please check the console for more details.",
           });
-          setError("Failed");
+          setSponsoredTxError("Failed to sponsor transaction");
         } finally {
           setSponsoredTxLoading(false);
         }
@@ -237,7 +271,6 @@ function BuildTx() {
             <Button disabled={true}>Submit Tx</Button>
           </>
         )}
-        <Textarea disabled={true} value={sponsorTx ? sponsorTx : tx ? tx : "cbor"} />
       </div>
     </div>
   );
