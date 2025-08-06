@@ -6,6 +6,8 @@ import { Button } from "../ui/button";
 import AndamioSDK from "@andamiojs/sdk";
 import { toast } from "sonner";
 import { Textarea } from "../ui/textarea";
+import { CSLSerializer } from "@meshsdk/core-csl";
+import { BlockfrostProvider, MeshTxBuilder, TxParser } from "@meshsdk/core";
 
 export function MintAccessToken() {
   return (
@@ -133,27 +135,43 @@ function BuildTx() {
           console.log("Collateral UTXOs:", collateralUtxos);
           console.log("UTXOs available for sponsorship:", utxos);
 
-          // Build sponsored transaction via API
-          const buildResponse = await fetch('/api/build-sponsored-tx', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ 
-              txCbor: tx,
-              sponsorAddress,
-              utxos,
-              collateralUtxos
-            }),
-          });
+          const blockfrost = new BlockfrostProvider(
+  "preprod9nU4kQP5IaqnIFP9M8DhK8bfk1W6dufu"
+);
 
-          const buildResult = await buildResponse.json();
+          const serializer = new CSLSerializer();
+    const parser = new TxParser(serializer, blockfrost);
+    const txParsed = await parser.parse(tx);
 
-          if (!buildResult.success) {
-            throw new Error(buildResult.error);
-          }
+    console.log("inputs Original:", txParsed.inputs);
 
-          const unsignedTx = buildResult.data;
+    // Filter out specific input if needed
+    txParsed.inputs = txParsed.inputs.filter(input => 
+      input.txIn.txHash !== "8222b0327a95e8c357016a5df64d93d7cf8a585a07c55327ae618a7e00d58d9e"
+    );
+
+    console.log("inputs Filtered:", txParsed.inputs);
+    
+    txParsed.changeAddress = sponsorAddress;
+    txParsed.fee = "0";
+    txParsed.collateralReturnAddress = sponsorAddress;
+    txParsed.collaterals = [];
+
+    const txBuilder = new MeshTxBuilder({
+      serializer,
+      fetcher: blockfrost,
+      evaluator: blockfrost,
+    });
+    txBuilder.meshTxBuilderBody = txParsed;
+
+    const unsignedTx = await txBuilder
+      .txIn(utxos[0].input.txHash, utxos[0].input.outputIndex)
+      .txIn(collateralUtxos[0].input.txHash, collateralUtxos[0].input.outputIndex)
+      .txInCollateral(
+        collateralUtxos[0].input.txHash,
+        collateralUtxos[0].input.outputIndex
+      )
+      .complete();
 
           // Sign transaction via API
           const signResponse = await fetch('/api/sign-transaction', {
