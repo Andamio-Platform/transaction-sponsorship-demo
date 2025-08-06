@@ -2,29 +2,20 @@
 
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CardanoWallet, MeshProvider, useWallet } from "@meshsdk/react";
+import { CardanoWallet, useWallet } from "@meshsdk/react";
 import { Button } from "@/components/ui/button";
-import { ClientMeshProvider } from "../providers/mesh-provider";
 import { useEffect, useState } from "react";
 
 export default function UserAccountBalance() {
   const [balance, setBalance] = useState<string>("0");
   const {
     wallet,
-    state,
     connected,
-    name,
-    connecting,
-    connect,
     disconnect,
-    error,
   } = useWallet();
 
   useEffect(() => {

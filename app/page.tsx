@@ -1,7 +1,14 @@
 import { MintAccessToken } from "@/components/mint-access-token";
 import SponsorAccountBalance from "@/components/sponsor-account/balance";
 import UserAccountBalance from "@/components/user-account/balance";
-import Image from "next/image";
+
+function TypographyH1() {
+  return (
+    <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
+      Andamio Transaction Sponsorship Demo
+    </h1>
+  )
+}
 
 export default function Home() {
   return (
@@ -18,12 +25,4 @@ export default function Home() {
       </main>
     </div>
   );
-}
-
-export function TypographyH1() {
-  return (
-    <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
-      Andamio Transaction Sponsorship Demo
-    </h1>
-  )
 }
