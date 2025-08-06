@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Force dynamic rendering globally
-  experimental: {
-    dynamicIO: true,
-  },
   // Disable static optimization for dynamic content
   trailingSlash: false,
   webpack: function (config, options) {
