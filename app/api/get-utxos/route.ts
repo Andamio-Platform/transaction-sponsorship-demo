@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Web3Sdk } from "@utxos/web3-sdk";
 import { BlockfrostProvider } from "@meshsdk/core";
+import { blockfrostApiKey } from "@/components/config";
 
 export const dynamic = 'force-dynamic';
 
 const blockfrost = new BlockfrostProvider(
-  "https://blockfrost1fnqnszsgxy7f6xm0e9a.blockfrost-m1.demeter.run"
+  blockfrostApiKey
 );
 
 const sdk = new Web3Sdk({

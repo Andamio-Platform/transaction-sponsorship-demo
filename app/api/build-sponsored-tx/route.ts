@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BlockfrostProvider, MeshTxBuilder, TxParser } from "@meshsdk/core";
 import { CSLSerializer } from "@meshsdk/core-csl";
+import { blockfrostApiKey } from "@/components/config";
 
 export const dynamic = 'force-dynamic';
 
 const blockfrost = new BlockfrostProvider(
-  "preprod9nU4kQP5IaqnIFP9M8DhK8bfk1W6dufu"
+  blockfrostApiKey
 );
 
 export async function POST(request: NextRequest) {

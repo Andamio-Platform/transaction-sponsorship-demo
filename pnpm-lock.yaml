@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@andamiojs/sdk':
-        specifier: ^0.2.5
-        version: 0.2.5(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
+        specifier: ^0.3.2
+        version: 0.3.2(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
       '@meshsdk/core':
         specifier: 1.9.0-beta.69
         version: 1.9.0-beta.69(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
@@ -23,6 +23,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@19.1.9)(react@19.1.0)
+      '@utxorpc/spec':
+        specifier: ^0.17.0
+        version: 0.17.0
       '@utxos/web3-sdk':
         specifier: ^0.0.44
         version: 0.0.44(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
@@ -95,8 +98,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@andamiojs/sdk@0.2.5':
-    resolution: {integrity: sha512-egM035hHIl3kh+AIoREPKabcX/0YGNv5ToMzkaLE1bqUuKenDHEAJPY14Tviyq522/IPhsqbeBoJUuPPouoBmg==}
+  '@andamiojs/sdk@0.3.2':
+    resolution: {integrity: sha512-a2qnYRxYmKO416UFD0hVXIbGkWBaWAtRIHC5wjMQ8uiczKPdPBb3i4m5/e01iVD+fL64yb1vYK+Lfr1JUvFSXA==}
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -3878,7 +3881,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.12
       '@jridgewell/trace-mapping': 0.3.29
 
-  '@andamiojs/sdk@0.2.5(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)':
+  '@andamiojs/sdk@0.3.2(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)':
     dependencies:
       '@meshsdk/common': 1.9.0-beta.62
       '@meshsdk/core': 1.9.0-beta.62(@babel/core@7.28.0)(@bufbuild/protobuf@1.10.1)(@harmoniclabs/bytestring@1.0.0)(@harmoniclabs/crypto@0.2.5)(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(bufferutil@4.0.9)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tailwindcss@4.1.11)(utf-8-validate@6.0.5)
