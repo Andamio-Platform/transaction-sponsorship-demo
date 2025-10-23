@@ -8,7 +8,7 @@ import {
   stringToHex,
 } from "@meshsdk/core";
 import { CSLSerializer } from "@meshsdk/core-csl";
-import { andamioApi, blockfrostApiKey, extraSponsorshipLovelace } from "../config";
+import { blockfrostApiKey, extraSponsorshipLovelace } from "../config";
 import AndamioSDK from "@andamiojs/sdk";
 import * as spec from "@utxorpc/spec";
 

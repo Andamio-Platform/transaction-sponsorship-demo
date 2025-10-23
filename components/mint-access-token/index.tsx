@@ -3,9 +3,7 @@
 import { useWallet } from "@meshsdk/react";
 import React from "react";
 import { Button } from "../ui/button";
-import AndamioSDK from "@andamiojs/sdk";
 import { toast } from "sonner";
-import { Textarea } from "../ui/textarea";
 import { CSLSerializer } from "@meshsdk/core-csl";
 import { BlockfrostProvider, MeshTxBuilder, TxParser } from "@meshsdk/core";
 import { Input } from "../ui/input";

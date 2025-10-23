@@ -22,7 +22,7 @@ const sdk = new Web3Sdk({
 
 export async function POST(request: NextRequest) {
   try {
-    const { txCbor, tx } = await request.json();
+    const { txCbor } = await request.json();
 
     if (!txCbor) {
       return NextResponse.json(
