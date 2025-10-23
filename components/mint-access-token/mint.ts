@@ -3,6 +3,7 @@ import {
   builtinByteString,
   bytesToHex,
   conStr0,
+  deserializeAddress,
   list,
   MeshTxBuilder,
   stringToHex,
@@ -62,6 +63,9 @@ export async function buildTxSponsor({
   userAddress: string;
   alias: string;
 }) {
+
+  const addr = deserializeAddress(userAddress);
+
   console.log("Minting access token for alias:", alias);
   const blockfrost = new BlockfrostProvider(blockfrostApiKey);
 
@@ -236,6 +240,7 @@ export async function buildTxSponsor({
       },
     ])
     .changeAddress(universalStaticChangeAddress)
+    .requiredSignerHash(addr.pubKeyHash)
     .complete();
 
   console.log("Transaction built:", txCbor);  

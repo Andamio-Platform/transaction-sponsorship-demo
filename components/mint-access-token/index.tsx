@@ -94,7 +94,9 @@ function BuildTx() {
 
     setCheckingAlias(true);
     try {
-      const isAvailableRes = await fetch("/api/alias-is-available?alias=" + alias);
+      const isAvailableRes = await fetch(
+        "/api/alias-is-available?alias=" + alias
+      );
       const isAvailable = await isAvailableRes.json();
 
       console.log("Alias availability response:", isAvailable);
@@ -128,171 +130,117 @@ function BuildTx() {
     });
   };
 
-  const onClick = () => {
-    const buildTransaction = async () => {
-      if (connected && address) {
-        if (!isAliasLocked) {
-          toast("Alias not locked", {
-            description:
-              "Please lock your alias before building the transaction.",
-          });
-          return;
-        }
-        setLoading(true);
-        try {
-          const tx = await buildTxSponsor({
-            userAddress: address,
-            alias: alias,
-          });
-          if (tx) {
-            setTx(tx);
-          }
-        } catch (error) {
-          console.error("Failed to build transaction:", error);
-          toast("Failed to build transaction", {
-            description: "Please check the console for more details.",
-          });
-          setError("Failed");
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    buildTransaction();
-    console.log("Transaction built:", tx);
-  };
+  const handleBuildSponsorSubmit = async () => {
+    try {
+      // Step 1: Build
+      if (!connected || !address || !isAliasLocked) return;
 
-  const onSponsorClick = () => {
-    const sponsorTransaction = async () => {
-      if (connected && tx) {
-        setSponsoredTxLoading(true);
-        try {
-          // Get UTXOs from API
-          const utxosResponse = await fetch("/api/get-utxos");
-          const utxosResult = await utxosResponse.json();
-
-          if (!utxosResult.success) {
-            throw new Error(utxosResult.error);
-          }
-
-          const { sponsorAddress, collateralUtxos, utxos } = utxosResult.data;
-
-          console.log("Collateral UTXOs:", collateralUtxos);
-          console.log("UTXOs available for sponsorship:", utxos);
-
-          const blockfrost = new BlockfrostProvider(blockfrostApiKey);
-
-          const serializer = new CSLSerializer();
-          const parser = new TxParser(serializer, blockfrost);
-          const txParsed = await parser.parse(tx);
-
-          console.log("inputs Original:", txParsed.inputs);
-
-          // Filter out specific input if needed
-          txParsed.inputs = txParsed.inputs.filter(
-            (input) => input.txIn.txHash !== universalStaticUtxo.input.txHash
-          );
-          txParsed.outputs = txParsed.outputs.filter(
-            (output) => output.address !== universalStaticUtxo.output.address
-          );
-
-          console.log("inputs Filtered:", txParsed.inputs);
-
-          txParsed.changeAddress = sponsorAddress;
-          txParsed.fee = "0";
-          txParsed.collateralReturnAddress = sponsorAddress;
-          txParsed.collaterals = [];
-
-          const txBuilder = new MeshTxBuilder({
-            serializer,
-            fetcher: blockfrost,
-            evaluator: blockfrost,
-          });
-          txBuilder.meshTxBuilderBody = txParsed;
-
-          const unsignedTx = await txBuilder
-            .selectUtxosFrom(utxos)
-            .txInCollateral(
-              collateralUtxos[0].input.txHash,
-              collateralUtxos[0].input.outputIndex
-            )
-            .txOut(sponsorAddress, [
-              {
-                unit: "lovelace",
-                quantity: "5000000",
-              },
-            ])
-            .complete();
-
-          // Sign transaction via API
-          const signResponse = await fetch("/api/sign-transaction", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ unsignedTx }),
-          });
-
-          const signResult = await signResponse.json();
-
-          if (!signResult.success) {
-            throw new Error(signResult.error);
-          }
-
-          setSponsorTx(signResult.data);
-        } catch (error) {
-          console.error("Failed to sponsor transaction:", error);
-          toast("Failed to sponsor transaction", {
-            description: "Please check the console for more details.",
-          });
-          setSponsoredTxError("Failed to sponsor transaction");
-        } finally {
-          setSponsoredTxLoading(false);
-        }
-      } else {
-        toast("No transaction to sponsor", {
-          description: "Please build a transaction first.",
-        });
-      }
-    };
-    sponsorTransaction();
-  };
-
-  const onSubmitClick = async () => {
-    if (sponsorTx) {
-      setSubmitLoading(true);
-      try {
-        const submitResponse = await fetch("/api/submit-transaction", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ signedTx: sponsorTx }),
-        });
-
-        const submitResult = await submitResponse.json();
-
-        if (!submitResult.success) {
-          throw new Error(submitResult.error);
-        }
-
-        const txHash = submitResult.data;
-        setTxHash(txHash);
-        toast("Transaction submitted successfully", {
-          description: `Transaction hash: ${txHash}`,
-        });
-      } catch (error) {
-        console.error("Failed to submit transaction:", error);
-        toast("Failed to submit transaction", {
-          description: "Please check the console for more details.",
-        });
-      } finally {
-        setSubmitLoading(false);
-      }
-    } else {
-      toast("No sponsored transaction to submit", {
-        description: "Please sponsor a transaction first.",
+      setLoading(true);
+      const builtTx = await buildTxSponsor({
+        userAddress: address,
+        alias: alias,
       });
+      if (!builtTx) throw new Error("Failed to build transaction");
+      setLoading(false);
+
+      // Step 2: Sponsor
+      setSponsoredTxLoading(true);
+      const utxosResponse = await fetch("/api/get-utxos");
+      const utxosResult = await utxosResponse.json();
+      if (!utxosResult.success) throw new Error(utxosResult.error);
+
+      const { sponsorAddress, collateralUtxos, utxos } = utxosResult.data;
+
+      console.log("Collateral UTXOs:", collateralUtxos);
+      console.log("UTXOs available for sponsorship:", utxos);
+
+      const blockfrost = new BlockfrostProvider(blockfrostApiKey);
+
+      const serializer = new CSLSerializer();
+      const parser = new TxParser(serializer, blockfrost);
+
+      const txParsed = await parser.parse(builtTx);
+
+      console.log("inputs Original:", txParsed.inputs);
+
+      // Filter out specific input if needed
+      txParsed.inputs = txParsed.inputs.filter(
+        (input) => input.txIn.txHash !== universalStaticUtxo.input.txHash
+      );
+      txParsed.outputs = txParsed.outputs.filter(
+        (output) => output.address !== universalStaticUtxo.output.address
+      );
+
+      console.log("inputs Filtered:", txParsed.inputs);
+
+      txParsed.changeAddress = sponsorAddress;
+      txParsed.fee = "0";
+      txParsed.collateralReturnAddress = sponsorAddress;
+      txParsed.collaterals = [];
+
+      const txBuilder = new MeshTxBuilder({
+        serializer,
+        fetcher: blockfrost,
+        evaluator: blockfrost,
+      });
+      txBuilder.meshTxBuilderBody = txParsed;
+
+      const unsignedTx = await txBuilder
+        .selectUtxosFrom(utxos)
+        .txInCollateral(
+          collateralUtxos[0].input.txHash,
+          collateralUtxos[0].input.outputIndex
+        )
+        .txOut(sponsorAddress, [
+          {
+            unit: "lovelace",
+            quantity: "5000000",
+          },
+        ])
+        .complete();
+
+      // Sign transaction via API
+      const signResponse = await fetch("/api/sign-transaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ unsignedTx }),
+      });
+
+      const signResult = await signResponse.json();
+
+      if (!signResult.success) {
+        throw new Error(signResult.error);
+      }
+
+      const signedTx = await wallet.signTx(signResult.data, true);
+      setSponsorTx(signedTx);
+      setSponsoredTxLoading(false);
+
+      // Step 3: Submit
+      setSubmitLoading(true);
+      const submitResponse = await fetch("/api/submit-transaction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ signedTx }),
+      });
+      const submitResult = await submitResponse.json();
+      if (!submitResult.success) throw new Error(submitResult.error);
+
+      setTxHash(submitResult.data);
+      toast("Transaction submitted successfully", {
+        description: `Transaction hash: ${submitResult.data}`,
+      });
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      toast("Transaction failed", {
+        description: error instanceof Error ? error.message : "Unknown error",
+      });
+    } finally {
+      setLoading(false);
+      setSponsoredTxLoading(false);
+      setSubmitLoading(false);
     }
   };
 
@@ -317,10 +265,10 @@ function BuildTx() {
               size="icon"
             >
               {checkingAlias ? (
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                ) : (
-                  <Lock className="h-4 w-4" />
-                )}
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : (
+                <Lock className="h-4 w-4" />
+              )}
             </Button>
           </div>
 
@@ -345,41 +293,25 @@ function BuildTx() {
 
       <div className="mt-5 grid grid-cols-3 justify-end w-full gap-4 items-center">
         {connected ? (
-          <>
-            <Button
-              onClick={onClick}
-              disabled={
-                loading || tx !== "" || sponsorTx !== "" || !isAliasLocked
-              }
-            >
-              {loading ? "Building..." : error ? error : "Build Tx"}
-            </Button>
-            <Button
-              disabled={tx === "" || sponsorTx !== ""}
-              onClick={onSponsorClick}
-            >
-              {sponsoredTxLoading
-                ? "Sponsoring..."
-                : sponsoredTxError
-                ? sponsoredTxError
-                : "Sponsor Tx"}
-            </Button>
-            <Button
-              disabled={sponsorTx === "" || submitLoading}
-              onClick={onSubmitClick}
-            >
-              {submitLoading
-                ? "Submitting..."
-                : txHash
-                ? "Submitted"
-                : "Submit Tx"}
-            </Button>
-          </>
+          <Button
+            onClick={handleBuildSponsorSubmit}
+            disabled={
+              loading || sponsoredTxLoading || submitLoading || !isAliasLocked
+            }
+          >
+            {loading
+              ? "Building..."
+              : sponsoredTxLoading
+              ? "Sponsoring..."
+              : submitLoading
+              ? "Submitting..."
+              : txHash
+              ? "Submitted"
+              : "Build & Submit"}
+          </Button>
         ) : (
           <>
             <Button disabled={true}>Build Tx</Button>
-            <Button disabled={true}>Sponsor Tx</Button>
-            <Button disabled={true}>Submit Tx</Button>
           </>
         )}
       </div>
