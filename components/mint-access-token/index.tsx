@@ -4,12 +4,8 @@ import { useWallet } from "@meshsdk/react";
 import React from "react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import { CSLSerializer } from "@meshsdk/core-csl";
-import { BlockfrostProvider, MeshTxBuilder, TxParser } from "@meshsdk/core";
 import { Input } from "../ui/input";
 import { Lock } from "lucide-react";
-import { buildTxSponsor, universalStaticUtxo } from "./mint";
-import { blockfrostApiKey, REQUIRED_PASSWORD } from "../config";
 
 export function MintAccessToken() {
   return (
@@ -107,27 +103,34 @@ function BuildTx() {
         });
         return;
       }
+
+      // Validate password via API
+      const passwordRes = await fetch("/api/validate-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const passwordResult = await passwordRes.json();
+
+      if (!passwordResult.success || !passwordResult.data.valid) {
+        toast("Incorrect password", {
+          description: "Please enter the correct password to proceed.",
+        });
+        return;
+      }
+
+      setIsAliasLocked(true);
+      toast("Alias locked", {
+        description: `Alias "${alias}" has been locked.`,
+      });
     } catch (error) {
-      console.error("Failed to check alias availability:", error);
-      toast("Error checking alias", {
+      console.error("Failed to validate:", error);
+      toast("Error", {
         description: "Please try again.",
       });
-      return;
     } finally {
       setCheckingAlias(false);
     }
-
-    if (password !== REQUIRED_PASSWORD) {
-      toast("Incorrect password", {
-        description: "Please enter the correct password to proceed.",
-      });
-      return;
-    }
-
-    setIsAliasLocked(true);
-    toast("Alias locked", {
-      description: `Alias "${alias}" has been locked.`,
-    });
   };
 
   const handleBuildSponsorSubmit = async () => {
@@ -136,11 +139,15 @@ function BuildTx() {
       if (!connected || !address || !isAliasLocked) return;
 
       setLoading(true);
-      const builtTx = await buildTxSponsor({
-        userAddress: address,
-        alias: alias,
+      const buildResponse = await fetch("/api/build-transaction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userAddress: address, alias }),
       });
-      if (!builtTx) throw new Error("Failed to build transaction");
+      const buildResult = await buildResponse.json();
+      if (!buildResult.success) throw new Error(buildResult.error);
+
+      const { transaction: builtTx, universalStaticUtxo } = buildResult.data;
       setLoading(false);
 
       // Step 2: Sponsor
@@ -154,50 +161,22 @@ function BuildTx() {
       console.log("Collateral UTXOs:", collateralUtxos);
       console.log("UTXOs available for sponsorship:", utxos);
 
-      const blockfrost = new BlockfrostProvider(blockfrostApiKey);
-
-      const serializer = new CSLSerializer();
-      const parser = new TxParser(serializer, blockfrost);
-
-      const txParsed = await parser.parse(builtTx);
-
-      console.log("inputs Original:", txParsed.inputs);
-
-      // Filter out specific input if needed
-      txParsed.inputs = txParsed.inputs.filter(
-        (input) => input.txIn.txHash !== universalStaticUtxo.input.txHash
-      );
-      txParsed.outputs = txParsed.outputs.filter(
-        (output) => output.address !== universalStaticUtxo.output.address
-      );
-
-      console.log("inputs Filtered:", txParsed.inputs);
-
-      txParsed.changeAddress = sponsorAddress;
-      txParsed.fee = "0";
-      txParsed.collateralReturnAddress = sponsorAddress;
-      txParsed.collaterals = [];
-
-      const txBuilder = new MeshTxBuilder({
-        serializer,
-        fetcher: blockfrost,
-        evaluator: blockfrost,
+      // Parse transaction via API
+      const parseResponse = await fetch("/api/parse-transaction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          builtTx,
+          sponsorAddress,
+          collateralUtxos,
+          utxos,
+          universalStaticUtxo,
+        }),
       });
-      txBuilder.meshTxBuilderBody = txParsed;
+      const parseResult = await parseResponse.json();
+      if (!parseResult.success) throw new Error(parseResult.error);
 
-      const unsignedTx = await txBuilder
-        .selectUtxosFrom(utxos)
-        .txInCollateral(
-          collateralUtxos[0].input.txHash,
-          collateralUtxos[0].input.outputIndex
-        )
-        .txOut(sponsorAddress, [
-          {
-            unit: "lovelace",
-            quantity: "5000000",
-          },
-        ])
-        .complete();
+      const { unsignedTx } = parseResult.data;
 
       // Sign transaction via API
       const signResponse = await fetch("/api/sign-transaction", {

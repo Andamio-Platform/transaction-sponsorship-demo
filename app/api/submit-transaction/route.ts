@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BlockfrostProvider } from "@meshsdk/core";
-import { blockfrostApiKey } from "@/components/config";
 
 export const dynamic = 'force-dynamic';
 
 const blockfrost = new BlockfrostProvider(
-  blockfrostApiKey
+  process.env.BLOCKFROST_API_KEY!
 );
 
 export async function POST(request: NextRequest) {

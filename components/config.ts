@@ -1,8 +1,5 @@
 // Client-side configuration (safe to expose to browser)
-export const blockfrostApiKey = process.env.NEXT_PUBLIC_BLOCKFROST_API_KEY!;
 export const andamioApi = process.env.NEXT_PUBLIC_ANDAMIO_API!;
-export const extraSponsorshipLovelace = process.env.NEXT_PUBLIC_EXTRA_SPONSORSHIP_LOVELACE!;
-export const REQUIRED_PASSWORD = process.env.NEXT_PUBLIC_REQUIRED_PASSWORD!;
 
 // Server-side only configuration (do not use in client components)
 export const web3SdkConfig = {

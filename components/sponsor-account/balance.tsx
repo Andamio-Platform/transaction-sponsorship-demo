@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BlockfrostProvider } from "@meshsdk/core";
 import { Web3Sdk } from "@utxos/web3-sdk";
-import { blockfrostApiKey, web3SdkConfig } from "../config";
+import { web3SdkConfig } from "../config";
 
 export const dynamic = 'force-dynamic';
 
 export default async function SponsorAccountBalance() {
-  const blockfrost = new BlockfrostProvider(blockfrostApiKey);
+  const blockfrost = new BlockfrostProvider(process.env.BLOCKFROST_API_KEY!);
 
   const sdk = new Web3Sdk({
     ...web3SdkConfig,

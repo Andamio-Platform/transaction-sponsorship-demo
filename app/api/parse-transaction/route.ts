@@ -4,34 +4,49 @@ import { CSLSerializer } from "@meshsdk/core-csl";
 
 export const dynamic = 'force-dynamic';
 
-const blockfrost = new BlockfrostProvider(
-  process.env.BLOCKFROST_API_KEY!
-);
-
 export async function POST(request: NextRequest) {
   try {
-    const { txCbor, sponsorAddress, utxos, collateralUtxos } = await request.json();
+    const { builtTx, sponsorAddress, collateralUtxos, utxos, universalStaticUtxo } =
+      await request.json();
 
-    if (!txCbor || !sponsorAddress || !utxos || !collateralUtxos) {
+    if (!builtTx || !sponsorAddress || !collateralUtxos || !utxos) {
       return NextResponse.json(
         { success: false, error: "Missing required parameters" },
         { status: 400 }
       );
     }
 
+    const blockfrostApiKey = process.env.BLOCKFROST_API_KEY;
+
+    if (!blockfrostApiKey) {
+      console.error("BLOCKFROST_API_KEY not set in environment variables");
+      return NextResponse.json(
+        { success: false, error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
+    const blockfrost = new BlockfrostProvider(blockfrostApiKey);
+
     const serializer = new CSLSerializer();
     const parser = new TxParser(serializer, blockfrost);
-    const txParsed = await parser.parse(txCbor);
+
+    const txParsed = await parser.parse(builtTx);
 
     console.log("inputs Original:", txParsed.inputs);
 
     // Filter out specific input if needed
-    txParsed.inputs = txParsed.inputs.filter(input => 
-      input.txIn.txHash !== "8222b0327a95e8c357016a5df64d93d7cf8a585a07c55327ae618a7e00d58d9e"
-    );
+    if (universalStaticUtxo) {
+      txParsed.inputs = txParsed.inputs.filter(
+        (input) => input.txIn.txHash !== universalStaticUtxo.input.txHash
+      );
+      txParsed.outputs = txParsed.outputs.filter(
+        (output) => output.address !== universalStaticUtxo.output.address
+      );
+    }
 
     console.log("inputs Filtered:", txParsed.inputs);
-    
+
     txParsed.changeAddress = sponsorAddress;
     txParsed.fee = "0";
     txParsed.collateralReturnAddress = sponsorAddress;
@@ -45,24 +60,31 @@ export async function POST(request: NextRequest) {
     txBuilder.meshTxBuilderBody = txParsed;
 
     const unsignedTx = await txBuilder
-      .txIn(utxos[0].input.txHash, utxos[0].input.outputIndex)
-      .txIn(collateralUtxos[0].input.txHash, collateralUtxos[0].input.outputIndex)
+      .selectUtxosFrom(utxos)
       .txInCollateral(
         collateralUtxos[0].input.txHash,
         collateralUtxos[0].input.outputIndex
       )
+      .txOut(sponsorAddress, [
+        {
+          unit: "lovelace",
+          quantity: "5000000",
+        },
+      ])
       .complete();
+
+    console.log("Transaction parsed and modified for sponsorship");
 
     return NextResponse.json({
       success: true,
-      data: unsignedTx,
+      data: { unsignedTx },
     });
   } catch (error) {
-    console.error("Failed to build sponsored transaction:", error);
+    console.error("Parse transaction error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error occurred",
+        error: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );
