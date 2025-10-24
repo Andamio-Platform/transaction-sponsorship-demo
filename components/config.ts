@@ -1,4 +1,13 @@
-export const blockfrostApiKey = "preprodXMypWaYDdjYkl3tI9JHvNQIOzjaJvtpl"
-export const andamioApi = "https://indexer-preprod-507341199760.us-central1.run.app"
-export const extraSponsorshipLovelace = "2000000";
-export const REQUIRED_PASSWORD = "andamio2025"; // Hardcoded password
+// Client-side configuration (safe to expose to browser)
+export const blockfrostApiKey = process.env.NEXT_PUBLIC_BLOCKFROST_API_KEY!;
+export const andamioApi = process.env.NEXT_PUBLIC_ANDAMIO_API!;
+export const extraSponsorshipLovelace = process.env.NEXT_PUBLIC_EXTRA_SPONSORSHIP_LOVELACE!;
+export const REQUIRED_PASSWORD = process.env.NEXT_PUBLIC_REQUIRED_PASSWORD!;
+
+// Server-side only configuration (do not use in client components)
+export const web3SdkConfig = {
+  projectId: process.env.WEB3_SDK_PROJECT_ID!,
+  apiKey: process.env.WEB3_SDK_API_KEY!,
+  network: process.env.WEB3_SDK_NETWORK as "testnet" | "mainnet",
+  privateKey: process.env.WEB3_SDK_PRIVATE_KEY!,
+};
